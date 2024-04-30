@@ -1,11 +1,25 @@
 from PyQt6.QtWidgets import *
 from gui import *
+from random import *
 
 
 class Logic(QMainWindow, Ui_Maze):
-        def __init__(self)->None:
-            '''
+    MAZEHEIGHT=140
+    MAZEWIDTH=68
+    def maze_generation(self):
+        xs = QTableWidgetItem('X')
+        spaces = QTableWidgetItem('')
+        for height in range(Logic.MAZEHEIGHT):
+            for cell in range(Logic.MAZEWIDTH):
+                if random()>.5:
+                    self.maze.setItem(height, cell, xs)
+                else:
+                    self.maze.setItem(height, cell, spaces)
 
-            '''
-            super().__init__()
-            self.setupUi(self)
+    def __init__(self)->None:
+        '''
+
+        '''
+        super().__init__()
+        self.setupUi(self)
+        self.maze_generation()
