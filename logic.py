@@ -17,7 +17,13 @@ class Logic(QMainWindow, Ui_Maze):
             self.maze.setItem(0, cell, QTableWidgetItem('X'))
         #bottom
         for cell in range(Logic.MAZEWIDTH):
-            self.maze.setItem(3, cell, QTableWidgetItem('X'))
+            self.maze.setItem(Logic.MAZEWIDTH-1, cell, QTableWidgetItem('X'))
+        #left
+        for cell in range(Logic.MAZEHEIGHT):
+            self.maze.setItem(cell, 0, QTableWidgetItem('X'))
+        #right
+        for cell in range(Logic.MAZEHEIGHT):
+            self.maze.setItem(cell, Logic.MAZEHEIGHT-1, QTableWidgetItem('X'))
         #inner maze
         for height in range(Logic.MAZEHEIGHT-2):
             for cell in range(Logic.MAZEWIDTH-2):
@@ -25,6 +31,7 @@ class Logic(QMainWindow, Ui_Maze):
                     self.maze.setItem(height+1, cell+1, QTableWidgetItem('X'))
                 else:
                     self.maze.setItem(height+1, cell+1, QTableWidgetItem(''))
+
 
     def __init__(self)->None:
         '''
