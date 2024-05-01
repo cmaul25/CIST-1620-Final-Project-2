@@ -4,17 +4,27 @@ from random import *
 
 
 class Logic(QMainWindow, Ui_Maze):
-    MAZEHEIGHT=140
+    MAZEHEIGHT=68
     MAZEWIDTH=68
-    def maze_generation(self):
-        xs = QTableWidgetItem('X')
-        spaces = QTableWidgetItem('')
-        for height in range(Logic.MAZEHEIGHT):
-            for cell in range(Logic.MAZEWIDTH):
+    def maze_generation(self)->None:
+        '''
+        generates maze
+        :return:
+        '''
+        #outter wall
+        #top
+        for cell in range(Logic.MAZEWIDTH):
+            self.maze.setItem(0, cell, QTableWidgetItem('X'))
+        #bottom
+        for cell in range(Logic.MAZEWIDTH):
+            self.maze.setItem(3, cell, QTableWidgetItem('X'))
+        #inner maze
+        for height in range(Logic.MAZEHEIGHT-2):
+            for cell in range(Logic.MAZEWIDTH-2):
                 if random()>.5:
-                    self.maze.setItem(height, cell, xs)
+                    self.maze.setItem(height+1, cell+1, QTableWidgetItem('X'))
                 else:
-                    self.maze.setItem(height, cell, spaces)
+                    self.maze.setItem(height+1, cell+1, QTableWidgetItem(''))
 
     def __init__(self)->None:
         '''
