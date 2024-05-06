@@ -6,6 +6,10 @@ from random import *
 class Logic(QMainWindow, Ui_Maze):
     MAZEHEIGHT=68
     MAZEWIDTH=68
+    STARTPOS=(0,0)
+    ENDPOS=(0,0)
+    ENDSTARTRANG=25
+
     def maze_generation(self)->list:
         '''
         generates maze
@@ -50,8 +54,55 @@ class Logic(QMainWindow, Ui_Maze):
             row.append('XXX')
         # Last row
         new_maze.append(first_row)
+        self.select_start_end(new_maze)
         return new_maze
-
+    def select_start_end(self,new_maze:list)->list:
+        '''
+        chooses start and end and carves a path between
+        :param new_maze: maze
+        :return:
+        '''
+        start_chance=1
+        end_chance=1
+        endin=False
+        startin=False
+        #end select
+        for line in range(1,Logic.ENDSTARTRANG+1):
+            for cell in range(Logic.MAZEWIDTH-Logic.ENDSTARTRANG-1,Logic.MAZEWIDTH-1):
+                if new_maze[line][cell]==' ':
+                    if randrange(Logic.ENDSTARTRANG**2)<end_chance:
+                        new_maze[line][cell]='END'
+                        Logic.ENDPOS = (line, cell)
+                        endin=True
+                        break
+                    end_chance += 1
+                else:
+                    end_chance+=1
+            if endin:
+                break
+        #start select
+        for line in range(Logic.MAZEHEIGHT-Logic.ENDSTARTRANG-1,Logic.MAZEHEIGHT-1):
+            for cell in range(1,Logic.ENDSTARTRANG+1):
+                if new_maze[line][cell]==' ':
+                    if randrange(Logic.ENDSTARTRANG**2)<end_chance:
+                        new_maze[line][cell]='Start'
+                        Logic.STARTPOS=(line,cell)
+                        startin=True
+                        break
+                    start_chance += 1
+                else:
+                    start_chance+=1
+            if startin:
+                break
+        self.carve_path(new_maze)
+        return new_maze
+    def carve_path(self,new_maze)->list:
+        '''
+        carves path from start to end
+        :param new_maze:
+        :return: new_maze with path made
+        '''
+        pass
     def maze_display(self,maze:list)->None:
         '''
         displays maze to table
@@ -60,7 +111,10 @@ class Logic(QMainWindow, Ui_Maze):
         for row in range(len(maze)):
             for cell in range(len(maze[row])):
                 self.maze.setItem(row,cell,QTableWidgetItem(maze[row][cell]))
-
+        #color start
+        self.maze.item(Logic.STARTPOS[0], Logic.STARTPOS[1]).setBackground(QtGui.QColor(243, 225, 66))
+        #color end
+        self.maze.item(Logic.ENDPOS[0], Logic.ENDPOS[1]).setBackground(QtGui.QColor(225, 62, 58))
 
     def __init__(self)->None:
         '''
