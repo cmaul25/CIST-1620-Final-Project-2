@@ -6,31 +6,40 @@ from random import *
 class Logic(QMainWindow, Ui_Maze):
     MAZEHEIGHT=68
     MAZEWIDTH=68
-    def maze_generation(self)->None:
+    def maze_generation(self)->list:
         '''
         generates maze
         :return:
         '''
-        #outter wall
-        #top
-        for cell in range(Logic.MAZEWIDTH):
-            self.maze.setItem(0, cell, QTableWidgetItem('X'))
-        #bottom
-        for cell in range(Logic.MAZEWIDTH):
-            self.maze.setItem(Logic.MAZEWIDTH-1, cell, QTableWidgetItem('X'))
-        #left
-        for cell in range(Logic.MAZEHEIGHT):
-            self.maze.setItem(cell, 0, QTableWidgetItem('X'))
-        #right
-        for cell in range(Logic.MAZEHEIGHT):
-            self.maze.setItem(cell, Logic.MAZEHEIGHT-1, QTableWidgetItem('X'))
-        #inner maze
-        for height in range(Logic.MAZEHEIGHT-2):
+        new_maze=[]
+        #first row
+        first_row=['X' for i in range(Logic.MAZEWIDTH)]
+        new_maze.append(first_row)
+        for line in range(Logic.MAZEHEIGHT-2):
+            row=[]
+            #left side
+            row.append('X')
             for cell in range(Logic.MAZEWIDTH-2):
                 if random()>.5:
-                    self.maze.setItem(height+1, cell+1, QTableWidgetItem('X'))
+                    row.append('X')
                 else:
-                    self.maze.setItem(height+1, cell+1, QTableWidgetItem(''))
+                    row.append(' ')
+            new_maze.append(row)
+            #right side
+            row.append('X')
+        # Last row
+        new_maze.append(first_row)
+        return new_maze
+
+    def maze_display(self)->None:
+        '''
+        dispplays maze to table
+        :return:
+        '''
+        maze=self.maze_generation()
+        for row in range(len(maze)):
+            for cell in range(len(maze[row])):
+                self.maze.setItem(row,cell,QTableWidgetItem(maze[row][cell]))
 
 
     def __init__(self)->None:
@@ -39,4 +48,13 @@ class Logic(QMainWindow, Ui_Maze):
         '''
         super().__init__()
         self.setupUi(self)
-        self.maze_generation()
+        self.maze_display()
+        self.UpButton.clicked.connect(lambda: self.upbutton())
+
+    def upbutton(self)->None:
+        '''
+
+        :return:
+        '''
+        pass
+
