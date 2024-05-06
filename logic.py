@@ -9,34 +9,54 @@ class Logic(QMainWindow, Ui_Maze):
     def maze_generation(self)->list:
         '''
         generates maze
-        :return:
+        :return: the maze generated
         '''
         new_maze=[]
         #first row
-        first_row=['X' for i in range(Logic.MAZEWIDTH)]
+        first_row=['XXX' for i in range(Logic.MAZEWIDTH)]
         new_maze.append(first_row)
-        for line in range(Logic.MAZEHEIGHT-2):
+
+        for line in range(1,Logic.MAZEHEIGHT-1):
             row=[]
             #left side
-            row.append('X')
-            for cell in range(Logic.MAZEWIDTH-2):
-                if random()>.5:
-                    row.append('X')
-                else:
+            row.append('XXX')
+            for cell in range(1,Logic.MAZEWIDTH-1):
+                # #checking if top middle top right and left above are X's then it has to be a space
+                # # X X 0
+                # # X ''
+                # if new_maze[line-1][cell-1]==new_maze[line-1][cell]==row[cell-1]=='XXX':
+                #     row.append(' ')
+                # checking if top middle top right and left above are ' 's then it has to be a X
+                # '' '' 0
+                # '' X
+                if new_maze[line - 1][cell - 1] == new_maze[line - 1][cell] == row[cell - 1] == ' ':
+                    row.append('XXX')
+                #checking if top and left is '' and top left is X then current is ''
+                # X '' 0
+                # '' ''
+                elif new_maze[line-1][cell]==row[cell - 1]==' ' and new_maze[line-1][cell-1]=='XXX':
                     row.append(' ')
+                #checking if top and left are X and top left is '' then current is X'
+                # '' X 0
+                # X X
+                elif new_maze[line-1][cell]==row[cell - 1]=='XXX' and new_maze[line-1][cell-1]==' ':
+                    row.append('XXX')
+                elif random()>.5:
+                    row.append(' ')
+                else:
+                    row.append('XXX')
             new_maze.append(row)
             #right side
-            row.append('X')
+            row.append('XXX')
         # Last row
         new_maze.append(first_row)
         return new_maze
 
-    def maze_display(self)->None:
+    def maze_display(self,maze:list)->None:
         '''
-        dispplays maze to table
+        displays maze to table
         :return:
         '''
-        maze=self.maze_generation()
         for row in range(len(maze)):
             for cell in range(len(maze[row])):
                 self.maze.setItem(row,cell,QTableWidgetItem(maze[row][cell]))
@@ -48,7 +68,8 @@ class Logic(QMainWindow, Ui_Maze):
         '''
         super().__init__()
         self.setupUi(self)
-        self.maze_display()
+        maze=self.maze_generation()
+        self.maze_display(maze)
         self.UpButton.clicked.connect(lambda: self.upbutton())
 
     def upbutton(self)->None:
