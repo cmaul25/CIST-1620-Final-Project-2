@@ -9,6 +9,7 @@ class Logic(QMainWindow, Ui_Maze):
     STARTPOS=(0,0)
     ENDPOS=(0,0)
     ENDSTARTRANG=25
+    TEMP=(0,0)
 
     def maze_generation(self)->list:
         '''
@@ -96,13 +97,95 @@ class Logic(QMainWindow, Ui_Maze):
                 break
         self.carve_path(new_maze)
         return new_maze
+
     def carve_path(self,new_maze)->list:
         '''
         carves path from start to end
         :param new_maze:
         :return: new_maze with path made
         '''
-        pass
+        #logic is goes to nearest space checking for
+        temp_start_pos=Logic.STARTPOS
+        previous_pos=0
+        for i in range (300):
+
+            if temp_start_pos[0]<0 or temp_start_pos[1]<0 or temp_start_pos[1]>Logic.MAZEWIDTH or temp_start_pos[0]>Logic.MAZEHEIGHT:
+                break
+            if temp_start_pos==Logic.ENDPOS:
+
+                break
+            #end around check
+            if new_maze[temp_start_pos[0]-1][temp_start_pos[1]]=='END' or  new_maze[temp_start_pos[0]][temp_start_pos[1]+1]=='END' or new_maze[temp_start_pos[0]][temp_start_pos[1]-1]=='END' or new_maze[temp_start_pos[0]+1][temp_start_pos[1]]=='END':
+                print('found')
+                break
+            #check all sides for spaces
+            # top check
+            if new_maze[temp_start_pos[0]-1][temp_start_pos[1]]==' ':
+                previous_pos=temp_start_pos
+                temp_start_pos=(temp_start_pos[0]-1,temp_start_pos[1])
+                new_maze[temp_start_pos[0]][temp_start_pos[1]] = 'w'
+            #right check
+            elif new_maze[temp_start_pos[0]][temp_start_pos[1]+1]==' ':
+                previous_pos = temp_start_pos
+                temp_start_pos = (temp_start_pos[0], temp_start_pos[1]+1)
+                new_maze[temp_start_pos[0]][temp_start_pos[1]] = 'w'
+            #left check
+            elif new_maze[temp_start_pos[0]][temp_start_pos[1]-1]==' ':
+                previous_pos = temp_start_pos
+                temp_start_pos = (temp_start_pos[0], temp_start_pos[1]-1)
+                new_maze[temp_start_pos[0]][temp_start_pos[1]] = 'w'
+            #bottom check
+            elif new_maze[temp_start_pos[0]+1][temp_start_pos[1]]==' ':
+                previous_pos = temp_start_pos
+                temp_start_pos = (temp_start_pos[0]+1, temp_start_pos[1])
+                new_maze[temp_start_pos[0]][temp_start_pos[1]] = 'w'
+
+            else:
+            #carving if stuck
+            #carve up
+
+                if temp_start_pos[0]>Logic.ENDPOS[0]:
+                    if new_maze[temp_start_pos[0]-1][temp_start_pos[1]]=='XXX':
+                        new_maze[temp_start_pos[0]-1][temp_start_pos[1]]=' '
+                        previous_pos = temp_start_pos
+                        temp_start_pos=(temp_start_pos[0]-1,temp_start_pos[1])
+                        new_maze[temp_start_pos[0]][temp_start_pos[1]] = 'wv'
+                    else:
+                        temp_start_pos = previous_pos
+                #carve down
+                elif temp_start_pos[0]<Logic.ENDPOS[0]:
+                    if new_maze[temp_start_pos[0]+1][temp_start_pos[1]]=='XXX':
+                        new_maze[temp_start_pos[0]+1][temp_start_pos[1]]=' '
+                        previous_pos = temp_start_pos
+                        temp_start_pos=(temp_start_pos[0]+1,temp_start_pos[1])
+                        new_maze[temp_start_pos[0]][temp_start_pos[1]] = 'wv'
+                    else:
+                        temp_start_pos = previous_pos
+                #carve left
+                elif temp_start_pos[1]<Logic.ENDPOS[1]:
+                    if new_maze[temp_start_pos[0]][temp_start_pos[1]+1]=='XXX':
+                        new_maze[temp_start_pos[0]][temp_start_pos[1]+1]=' '
+                        previous_pos = temp_start_pos
+                        temp_start_pos=(temp_start_pos[0],temp_start_pos[1]+1)
+                        new_maze[temp_start_pos[0]][temp_start_pos[1]] = 'wv'
+                    else:
+                        temp_start_pos = previous_pos
+                #carve right
+                elif temp_start_pos[1]>Logic.ENDPOS[1]:
+                    if new_maze[temp_start_pos[0]][temp_start_pos[1]-1]=='XXX':
+                        new_maze[temp_start_pos[0]][temp_start_pos[1]-1]=' '
+                        previous_pos = temp_start_pos
+                        temp_start_pos=(temp_start_pos[0],temp_start_pos[1]-1)
+                        new_maze[temp_start_pos[0]][temp_start_pos[1]] = 'wv'
+                    else:
+                        temp_start_pos = previous_pos
+
+
+            print(temp_start_pos)
+        Logic.TEMP=temp_start_pos
+        return new_maze
+
+
     def maze_display(self,maze:list)->None:
         '''
         displays maze to table
@@ -115,6 +198,7 @@ class Logic(QMainWindow, Ui_Maze):
         self.maze.item(Logic.STARTPOS[0], Logic.STARTPOS[1]).setBackground(QtGui.QColor(243, 225, 66))
         #color end
         self.maze.item(Logic.ENDPOS[0], Logic.ENDPOS[1]).setBackground(QtGui.QColor(225, 62, 58))
+        self.maze.item(Logic.TEMP[0], Logic.TEMP[1]).setBackground(QtGui.QColor(0, 225, 0))
 
     def __init__(self)->None:
         '''
