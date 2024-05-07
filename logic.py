@@ -1,8 +1,7 @@
 from PyQt6.QtWidgets import *
-from PyQt6.QtCore import QTimer
-import time
 from gui import *
 from random import *
+from timer import *
 
 class Logic(QMainWindow, Ui_Maze):
     MAZEHEIGHT=68
@@ -215,39 +214,43 @@ class Logic(QMainWindow, Ui_Maze):
         '''
         super().__init__()
         self.setupUi(self)
-        self.timeon=False
+        self.currentPlayerTime = 0
         self.gen_maze=self.maze_generation()
         self.gen_maze=self.maze_display(self.gen_maze)
         self.currentpos=Logic.STARTPOS
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.timerEvent)
-        self.time = 0
+        self.timeon=False
+        self.end=False
         self.UpButton.clicked.connect(lambda: self.upbutton(self.gen_maze))
         self.DownButton.clicked.connect(lambda: self.downbutton(self.gen_maze))
         self.RightButton.clicked.connect(lambda: self.rightbutton(self.gen_maze))
         self.LeftButton.clicked.connect(lambda: self.leftbutton(self.gen_maze))
         self.maze.keyPressEvent=self.keyPressEvent
 
+    def timerWorker(self):
+        self.worker=Timer()
+        self.worker.start()
+        self.worker.time.connect(self.update_time)
 
-    def timerEvent(self, a0):
-        self.CurrentTime.setText(f'Current Time: {self.time}')
-        self.time+=1
+    def update_time(self,val):
+        self.currentPlayerTime=val
+        self.CurrentTime.setText(f'Current Time: {val}')
     def upbutton(self,maze:list)->list:
         '''
         makes character go up
         :return:updated maze
         '''
-        if self.timeon==False:
-            self.timeon=True
-            self.timerEvent()
-
-        print(self.time.toString("mm:ss"))
-        if maze[self.currentpos[0]-1][self.currentpos[1]]==' ':
-            maze[self.currentpos[0] - 1][self.currentpos[1]] = ' :) '
-            maze[self.currentpos[0]][self.currentpos[1]] = ' '
-            self.currentpos=(self.currentpos[0]-1,self.currentpos[1])
-        if maze[self.currentpos[0] - 1][self.currentpos[1]] == 'END' or maze[self.currentpos[0]][self.currentpos[1] + 1] == 'END' or maze[self.currentpos[0]][self.currentpos[1] - 1] == 'END' or maze[self.currentpos[0] + 1][self.currentpos[1]] == 'END':
-            print('end')
+        if self.end == False:
+            if self.timeon==False:
+                self.timeon = True
+                self.timerWorker()
+            if maze[self.currentpos[0]-1][self.currentpos[1]]==' ':
+                maze[self.currentpos[0] - 1][self.currentpos[1]] = ' :) '
+                maze[self.currentpos[0]][self.currentpos[1]] = ' '
+                self.currentpos=(self.currentpos[0]-1,self.currentpos[1])
+            if maze[self.currentpos[0] - 1][self.currentpos[1]] == 'END' or maze[self.currentpos[0]][self.currentpos[1] + 1] == 'END' or maze[self.currentpos[0]][self.currentpos[1] - 1] == 'END' or maze[self.currentpos[0] + 1][self.currentpos[1]] == 'END':
+                self.worker.requestInterruption()
+                print(self.currentPlayerTime)
+                self.end=True
 
         return self.maze_display(maze)
     def downbutton(self,maze:list)->list:
@@ -255,45 +258,54 @@ class Logic(QMainWindow, Ui_Maze):
         makes character go up
         :return:updated maze
         '''
-        if self.timeon==False:
-            self.timeon = True
-            self.timer.start(1000)
-        if maze[self.currentpos[0]+1][self.currentpos[1]]==' ':
-            maze[self.currentpos[0] + 1][self.currentpos[1]] = ' :) '
-            maze[self.currentpos[0]][self.currentpos[1]] = ' '
-            self.currentpos=(self.currentpos[0]+1,self.currentpos[1])
-        if maze[self.currentpos[0] - 1][self.currentpos[1]] == 'END' or maze[self.currentpos[0]][self.currentpos[1] + 1] == 'END' or maze[self.currentpos[0]][self.currentpos[1] - 1] == 'END' or maze[self.currentpos[0] + 1][self.currentpos[1]] == 'END':
-            print('end')
+        if self.end == False:
+            if self.timeon == False:
+                self.timeon = True
+                self.timerWorker()
+            if maze[self.currentpos[0]+1][self.currentpos[1]]==' ':
+                maze[self.currentpos[0] + 1][self.currentpos[1]] = ' :) '
+                maze[self.currentpos[0]][self.currentpos[1]] = ' '
+                self.currentpos=(self.currentpos[0]+1,self.currentpos[1])
+            if maze[self.currentpos[0] - 1][self.currentpos[1]] == 'END' or maze[self.currentpos[0]][self.currentpos[1] + 1] == 'END' or maze[self.currentpos[0]][self.currentpos[1] - 1] == 'END' or maze[self.currentpos[0] + 1][self.currentpos[1]] == 'END':
+                self.worker.requestInterruption()
+                print(self.currentPlayerTime)
+                self.end=True
         return self.maze_display(maze)
     def rightbutton(self,maze:list)->list:
         '''
         makes character go up
         :return:updated maze
         '''
-        if self.timeon==False:
-            self.timeon = True
-            self.timer.start(1000)
-        if maze[self.currentpos[0]][self.currentpos[1]+1]==' ':
-            maze[self.currentpos[0]][self.currentpos[1]+1] = ' :) '
-            maze[self.currentpos[0]][self.currentpos[1]] = ' '
-            self.currentpos=(self.currentpos[0],self.currentpos[1]+1)
-        if maze[self.currentpos[0] - 1][self.currentpos[1]] == 'END' or maze[self.currentpos[0]][self.currentpos[1] + 1] == 'END' or maze[self.currentpos[0]][self.currentpos[1] - 1] == 'END' or maze[self.currentpos[0] + 1][self.currentpos[1]] == 'END':
-            print('end')
+        if self.end == False:
+            if self.timeon == False:
+                self.timeon = True
+                self.timerWorker()
+            if maze[self.currentpos[0]][self.currentpos[1]+1]==' ':
+                maze[self.currentpos[0]][self.currentpos[1]+1] = ' :) '
+                maze[self.currentpos[0]][self.currentpos[1]] = ' '
+                self.currentpos=(self.currentpos[0],self.currentpos[1]+1)
+            if maze[self.currentpos[0] - 1][self.currentpos[1]] == 'END' or maze[self.currentpos[0]][self.currentpos[1] + 1] == 'END' or maze[self.currentpos[0]][self.currentpos[1] - 1] == 'END' or maze[self.currentpos[0] + 1][self.currentpos[1]] == 'END':
+                self.worker.requestInterruption()
+                print(self.currentPlayerTime)
+                self.end=True
         return self.maze_display(maze)
     def leftbutton(self,maze:list)->list:
         '''
         makes character go up
         :return:updated maze
         '''
-        if self.timeon==False:
-            self.timeon = True
-            self.timer.start(1000)
-        if maze[self.currentpos[0]][self.currentpos[1]-1]==' ':
-            maze[self.currentpos[0]][self.currentpos[1]-1] = ' :) '
-            maze[self.currentpos[0]][self.currentpos[1]] = ' '
-            self.currentpos=(self.currentpos[0],self.currentpos[1]-1)
-        if maze[self.currentpos[0] - 1][self.currentpos[1]] == 'END' or maze[self.currentpos[0]][self.currentpos[1] + 1] == 'END' or maze[self.currentpos[0]][self.currentpos[1] - 1] == 'END' or maze[self.currentpos[0] + 1][self.currentpos[1]] == 'END':
-            print('end')
+        if self.end == False:
+            if self.timeon == False:
+                self.timeon = True
+                self.timerWorker()
+            if maze[self.currentpos[0]][self.currentpos[1]-1]==' ':
+                maze[self.currentpos[0]][self.currentpos[1]-1] = ' :) '
+                maze[self.currentpos[0]][self.currentpos[1]] = ' '
+                self.currentpos=(self.currentpos[0],self.currentpos[1]-1)
+            if maze[self.currentpos[0] - 1][self.currentpos[1]] == 'END' or maze[self.currentpos[0]][self.currentpos[1] + 1] == 'END' or maze[self.currentpos[0]][self.currentpos[1] - 1] == 'END' or maze[self.currentpos[0] + 1][self.currentpos[1]] == 'END':
+                self.worker.requestInterruption()
+                print(self.currentPlayerTime)
+                self.end=True
         return self.maze_display(maze)
 
     def keyPressEvent(self, event):
