@@ -2,6 +2,7 @@ from PyQt6.QtWidgets import *
 from gui import *
 from random import *
 from timer import *
+import leaderboard
 
 class Logic(QMainWindow, Ui_Maze):
     MAZEHEIGHT=68
@@ -175,10 +176,10 @@ class Logic(QMainWindow, Ui_Maze):
         '''
         try:
             backone=poslist.pop(-1)
-            print(poslist)
+
         except IndexError:
             #generates new maze if unable to find find path
-            print('new maze made!!!')
+
             maze=self.maze_generation()
             for row in range(len(maze)):
                 for cell in range(len(maze[row])):
@@ -204,10 +205,17 @@ class Logic(QMainWindow, Ui_Maze):
                     # color start
                     self.maze.item(row, cell).setBackground(QtGui.QColor(243, 225, 66))
         return maze
-
-        # set time
-
-
+         #displays leaderboard
+    def display_leaderboard(self):
+        '''
+        displays leaderboard
+        :return:
+        '''
+        scores=leaderboard.read_board()
+        top_5='Leaderboard: '
+        for score in scores[:5]:
+            top_5=top_5+score+'\n '
+        self.LeaderBoardLabel.setText(top_5)
     def __init__(self)->None:
         '''
 
@@ -215,6 +223,7 @@ class Logic(QMainWindow, Ui_Maze):
         super().__init__()
         self.setupUi(self)
         self.currentPlayerTime = 0
+        self.display_leaderboard()
         self.gen_maze=self.maze_generation()
         self.gen_maze=self.maze_display(self.gen_maze)
         self.currentpos=Logic.STARTPOS
@@ -307,7 +316,7 @@ class Logic(QMainWindow, Ui_Maze):
                 print(self.currentPlayerTime)
                 self.end=True
         return self.maze_display(maze)
-
+    #allows for the ability to use keys to move
     def keyPressEvent(self, event):
         if event.key()==16777235:
             self.upbutton(self.gen_maze)
@@ -317,3 +326,5 @@ class Logic(QMainWindow, Ui_Maze):
             self.rightbutton(self.gen_maze)
         elif event.key()==16777234:
             self.leftbutton(self.gen_maze)
+
+
