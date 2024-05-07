@@ -1,4 +1,6 @@
 from PyQt6.QtWidgets import *
+from PyQt6.QtCore import QTimer
+import time
 from gui import *
 from random import *
 
@@ -204,6 +206,8 @@ class Logic(QMainWindow, Ui_Maze):
                     self.maze.item(row, cell).setBackground(QtGui.QColor(243, 225, 66))
         return maze
 
+        # set time
+
 
     def __init__(self)->None:
         '''
@@ -211,19 +215,33 @@ class Logic(QMainWindow, Ui_Maze):
         '''
         super().__init__()
         self.setupUi(self)
+        self.timeon=False
         self.gen_maze=self.maze_generation()
         self.gen_maze=self.maze_display(self.gen_maze)
         self.currentpos=Logic.STARTPOS
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.timerEvent)
+        self.time = 0
         self.UpButton.clicked.connect(lambda: self.upbutton(self.gen_maze))
         self.DownButton.clicked.connect(lambda: self.downbutton(self.gen_maze))
         self.RightButton.clicked.connect(lambda: self.rightbutton(self.gen_maze))
         self.LeftButton.clicked.connect(lambda: self.leftbutton(self.gen_maze))
         self.maze.keyPressEvent=self.keyPressEvent
+
+
+    def timerEvent(self, a0):
+        self.CurrentTime.setText(f'Current Time: {self.time}')
+        self.time+=1
     def upbutton(self,maze:list)->list:
         '''
         makes character go up
         :return:updated maze
         '''
+        if self.timeon==False:
+            self.timeon=True
+            self.timerEvent()
+
+        print(self.time.toString("mm:ss"))
         if maze[self.currentpos[0]-1][self.currentpos[1]]==' ':
             maze[self.currentpos[0] - 1][self.currentpos[1]] = ' :) '
             maze[self.currentpos[0]][self.currentpos[1]] = ' '
@@ -237,6 +255,9 @@ class Logic(QMainWindow, Ui_Maze):
         makes character go up
         :return:updated maze
         '''
+        if self.timeon==False:
+            self.timeon = True
+            self.timer.start(1000)
         if maze[self.currentpos[0]+1][self.currentpos[1]]==' ':
             maze[self.currentpos[0] + 1][self.currentpos[1]] = ' :) '
             maze[self.currentpos[0]][self.currentpos[1]] = ' '
@@ -249,6 +270,9 @@ class Logic(QMainWindow, Ui_Maze):
         makes character go up
         :return:updated maze
         '''
+        if self.timeon==False:
+            self.timeon = True
+            self.timer.start(1000)
         if maze[self.currentpos[0]][self.currentpos[1]+1]==' ':
             maze[self.currentpos[0]][self.currentpos[1]+1] = ' :) '
             maze[self.currentpos[0]][self.currentpos[1]] = ' '
@@ -261,6 +285,9 @@ class Logic(QMainWindow, Ui_Maze):
         makes character go up
         :return:updated maze
         '''
+        if self.timeon==False:
+            self.timeon = True
+            self.timer.start(1000)
         if maze[self.currentpos[0]][self.currentpos[1]-1]==' ':
             maze[self.currentpos[0]][self.currentpos[1]-1] = ' :) '
             maze[self.currentpos[0]][self.currentpos[1]] = ' '
