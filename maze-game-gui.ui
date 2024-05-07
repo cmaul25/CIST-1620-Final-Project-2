@@ -29,8 +29,8 @@
    <widget class="QPushButton" name="UpButton">
     <property name="geometry">
      <rect>
-      <x>430</x>
-      <y>660</y>
+      <x>410</x>
+      <y>620</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -47,8 +47,8 @@
    <widget class="QPushButton" name="RightButton">
     <property name="geometry">
      <rect>
-      <x>490</x>
-      <y>690</y>
+      <x>470</x>
+      <y>650</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -65,8 +65,8 @@
    <widget class="QPushButton" name="LeftButton">
     <property name="geometry">
      <rect>
-      <x>370</x>
-      <y>690</y>
+      <x>350</x>
+      <y>650</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -80,11 +80,11 @@
      <string>Left</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_4">
+   <widget class="QPushButton" name="DownButton">
     <property name="geometry">
      <rect>
-      <x>430</x>
-      <y>720</y>
+      <x>410</x>
+      <y>680</y>
       <width>61</width>
       <height>31</height>
      </rect>
@@ -104,7 +104,7 @@
       <x>0</x>
       <y>0</y>
       <width>900</width>
-      <height>631</height>
+      <height>611</height>
      </rect>
     </property>
     <property name="maximumSize">
@@ -303,11 +303,11 @@
     <column/>
     <column/>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="LeaderBoardLabel">
     <property name="geometry">
      <rect>
-      <x>150</x>
-      <y>660</y>
+      <x>130</x>
+      <y>620</y>
       <width>151</width>
       <height>31</height>
      </rect>
@@ -321,11 +321,11 @@
      <string>Leaderboard:</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_3">
+   <widget class="QLabel" name="CurrentTime">
     <property name="geometry">
      <rect>
-      <x>630</x>
-      <y>660</y>
+      <x>610</x>
+      <y>620</y>
       <width>151</width>
       <height>31</height>
      </rect>
