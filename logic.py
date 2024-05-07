@@ -135,12 +135,10 @@ class Logic(QMainWindow, Ui_Maze):
                 new_maze[temp_start_pos[0]][temp_start_pos[1]] = 'w'
             # if wv means it was a carved tile checking for carved as to not remove to many tiles
             elif new_maze[temp_start_pos[0] - 1][temp_start_pos[1]] == 'wv' or new_maze[temp_start_pos[0] - 1][temp_start_pos[1]] == 'wv' or new_maze[temp_start_pos[0]][temp_start_pos[1]-1]=='wv' or new_maze[temp_start_pos[0]][temp_start_pos[1]+1]=='wv' or new_maze[temp_start_pos[0]][temp_start_pos[1]]=='wv':
-                temp_start_pos=self.retrace(poslist)
+                temp_start_pos,new_maze=self.retrace(poslist,new_maze)
             else:
             #carving if stuck
             #carve up
-
-
                 if temp_start_pos[0]>Logic.ENDPOS[0] and new_maze[temp_start_pos[0]-1][temp_start_pos[1]]=='XXX' and new_maze[temp_start_pos[0]-2][temp_start_pos[1]]==' ':
                         new_maze[temp_start_pos[0]-1][temp_start_pos[1]]=' '
                         poslist.append(temp_start_pos)
@@ -165,10 +163,9 @@ class Logic(QMainWindow, Ui_Maze):
                         temp_start_pos=(temp_start_pos[0],temp_start_pos[1]-1)
                         new_maze[temp_start_pos[0]][temp_start_pos[1]] = 'wv'
                 else:
-                    temp_start_pos = self.retrace(poslist)
-        Logic.TEMP=temp_start_pos
+                    temp_start_pos,new_maze = self.retrace(poslist,new_maze)
         return new_maze
-    def retrace(self,poslist, n=1)->tuple:
+    def retrace(self,poslist,maze)->tuple:
         '''
         recursive function that goes to previous positions
         :param poslist:
@@ -177,9 +174,17 @@ class Logic(QMainWindow, Ui_Maze):
         '''
         try:
             backone=poslist.pop(-1)
-        except:
+            print(poslist)
+        except IndexError:
+            #generates new maze if unable to find find path
+            print('new maze made!!!')
+            maze=self.maze_generation()
+            for row in range(len(maze)):
+                for cell in range(len(maze[row])):
+                    if maze[row][cell] == 'wv' or maze[row][cell] == 'w':
+                        maze[row][cell] = ' '
             backone=Logic.STARTPOS
-        return backone
+        return backone,maze
 
     def maze_display(self,maze:list)->list:
         '''
@@ -191,10 +196,12 @@ class Logic(QMainWindow, Ui_Maze):
                 if maze[row][cell]=='wv' or maze[row][cell]=='w':
                     maze[row][cell]=' '
                 self.maze.setItem(row,cell,QTableWidgetItem(maze[row][cell]))
-        #color start
-        self.maze.item(Logic.STARTPOS[0], Logic.STARTPOS[1]).setBackground(QtGui.QColor(243, 225, 66))
-        #color end
-        self.maze.item(Logic.ENDPOS[0], Logic.ENDPOS[1]).setBackground(QtGui.QColor(225, 62, 58))
+                if maze[row][cell]=='END':
+                    # color end
+                    self.maze.item(row, cell).setBackground(QtGui.QColor(225, 62, 58))
+                elif maze[row][cell]=='Start':
+                    # color start
+                    self.maze.item(row, cell).setBackground(QtGui.QColor(243, 225, 66))
         return maze
 
 
@@ -204,14 +211,14 @@ class Logic(QMainWindow, Ui_Maze):
         '''
         super().__init__()
         self.setupUi(self)
-        maze=self.maze_generation()
-        maze=self.maze_display(maze)
+        self.gen_maze=self.maze_generation()
+        self.gen_maze=self.maze_display(self.gen_maze)
         self.currentpos=Logic.STARTPOS
-        self.UpButton.clicked.connect(lambda: self.upbutton(maze))
-        self.DownButton.clicked.connect(lambda: self.downbutton(maze))
-        self.RightButton.clicked.connect(lambda: self.rightbutton(maze))
-        self.LeftButton.clicked.connect(lambda: self.leftbutton(maze))
-
+        self.UpButton.clicked.connect(lambda: self.upbutton(self.gen_maze))
+        self.DownButton.clicked.connect(lambda: self.downbutton(self.gen_maze))
+        self.RightButton.clicked.connect(lambda: self.rightbutton(self.gen_maze))
+        self.LeftButton.clicked.connect(lambda: self.leftbutton(self.gen_maze))
+        self.maze.keyPressEvent=self.keyPressEvent
     def upbutton(self,maze:list)->list:
         '''
         makes character go up
@@ -221,6 +228,8 @@ class Logic(QMainWindow, Ui_Maze):
             maze[self.currentpos[0] - 1][self.currentpos[1]] = ' :) '
             maze[self.currentpos[0]][self.currentpos[1]] = ' '
             self.currentpos=(self.currentpos[0]-1,self.currentpos[1])
+        if maze[self.currentpos[0] - 1][self.currentpos[1]] == 'END' or maze[self.currentpos[0]][self.currentpos[1] + 1] == 'END' or maze[self.currentpos[0]][self.currentpos[1] - 1] == 'END' or maze[self.currentpos[0] + 1][self.currentpos[1]] == 'END':
+            print('end')
 
         return self.maze_display(maze)
     def downbutton(self,maze:list)->list:
@@ -232,7 +241,8 @@ class Logic(QMainWindow, Ui_Maze):
             maze[self.currentpos[0] + 1][self.currentpos[1]] = ' :) '
             maze[self.currentpos[0]][self.currentpos[1]] = ' '
             self.currentpos=(self.currentpos[0]+1,self.currentpos[1])
-
+        if maze[self.currentpos[0] - 1][self.currentpos[1]] == 'END' or maze[self.currentpos[0]][self.currentpos[1] + 1] == 'END' or maze[self.currentpos[0]][self.currentpos[1] - 1] == 'END' or maze[self.currentpos[0] + 1][self.currentpos[1]] == 'END':
+            print('end')
         return self.maze_display(maze)
     def rightbutton(self,maze:list)->list:
         '''
@@ -243,7 +253,8 @@ class Logic(QMainWindow, Ui_Maze):
             maze[self.currentpos[0]][self.currentpos[1]+1] = ' :) '
             maze[self.currentpos[0]][self.currentpos[1]] = ' '
             self.currentpos=(self.currentpos[0],self.currentpos[1]+1)
-
+        if maze[self.currentpos[0] - 1][self.currentpos[1]] == 'END' or maze[self.currentpos[0]][self.currentpos[1] + 1] == 'END' or maze[self.currentpos[0]][self.currentpos[1] - 1] == 'END' or maze[self.currentpos[0] + 1][self.currentpos[1]] == 'END':
+            print('end')
         return self.maze_display(maze)
     def leftbutton(self,maze:list)->list:
         '''
@@ -254,6 +265,16 @@ class Logic(QMainWindow, Ui_Maze):
             maze[self.currentpos[0]][self.currentpos[1]-1] = ' :) '
             maze[self.currentpos[0]][self.currentpos[1]] = ' '
             self.currentpos=(self.currentpos[0],self.currentpos[1]-1)
-
+        if maze[self.currentpos[0] - 1][self.currentpos[1]] == 'END' or maze[self.currentpos[0]][self.currentpos[1] + 1] == 'END' or maze[self.currentpos[0]][self.currentpos[1] - 1] == 'END' or maze[self.currentpos[0] + 1][self.currentpos[1]] == 'END':
+            print('end')
         return self.maze_display(maze)
 
+    def keyPressEvent(self, event):
+        if event.key()==16777235:
+            self.upbutton(self.gen_maze)
+        elif event.key()==16777237:
+            self.downbutton(self.gen_maze)
+        elif event.key()==16777236:
+            self.rightbutton(self.gen_maze)
+        elif event.key()==16777234:
+            self.leftbutton(self.gen_maze)
