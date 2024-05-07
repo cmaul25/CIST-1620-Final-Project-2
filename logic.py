@@ -2,7 +2,6 @@ from PyQt6.QtWidgets import *
 from gui import *
 from random import *
 
-
 class Logic(QMainWindow, Ui_Maze):
     MAZEHEIGHT=68
     MAZEWIDTH=68
@@ -106,40 +105,36 @@ class Logic(QMainWindow, Ui_Maze):
         '''
         #logic is goes to nearest space checking for
         temp_start_pos=Logic.STARTPOS
-        previous_pos=0
-        for i in range (300):
+        poslist=[]
+        while temp_start_pos!=Logic.ENDPOS:
 
-            if temp_start_pos[0]<0 or temp_start_pos[1]<0 or temp_start_pos[1]>Logic.MAZEWIDTH or temp_start_pos[0]>Logic.MAZEHEIGHT:
-                break
-            if temp_start_pos==Logic.ENDPOS:
-
+            if temp_start_pos[0]<0 or temp_start_pos[1]<0 or temp_start_pos[1]>Logic.MAZEWIDTH or temp_start_pos[0]>Logic.MAZEHEIGHT or temp_start_pos==Logic.ENDPOS:
                 break
             #end around check
             if new_maze[temp_start_pos[0]-1][temp_start_pos[1]]=='END' or  new_maze[temp_start_pos[0]][temp_start_pos[1]+1]=='END' or new_maze[temp_start_pos[0]][temp_start_pos[1]-1]=='END' or new_maze[temp_start_pos[0]+1][temp_start_pos[1]]=='END':
-                print('found')
                 break
             #check all sides for spaces
             # top check
             if new_maze[temp_start_pos[0]-1][temp_start_pos[1]]==' ':
-                previous_pos=temp_start_pos
+                poslist.append(temp_start_pos)
                 temp_start_pos=(temp_start_pos[0]-1,temp_start_pos[1])
                 new_maze[temp_start_pos[0]][temp_start_pos[1]] = 'w'
             #right check
             elif new_maze[temp_start_pos[0]][temp_start_pos[1]+1]==' ':
-                previous_pos = temp_start_pos
+                poslist.append(temp_start_pos)
                 temp_start_pos = (temp_start_pos[0], temp_start_pos[1]+1)
                 new_maze[temp_start_pos[0]][temp_start_pos[1]] = 'w'
             #left check
             elif new_maze[temp_start_pos[0]][temp_start_pos[1]-1]==' ':
-                previous_pos = temp_start_pos
+                poslist.append(temp_start_pos)
                 temp_start_pos = (temp_start_pos[0], temp_start_pos[1]-1)
                 new_maze[temp_start_pos[0]][temp_start_pos[1]] = 'w'
             #bottom check
             elif new_maze[temp_start_pos[0]+1][temp_start_pos[1]]==' ':
-                previous_pos = temp_start_pos
+                poslist.append(temp_start_pos)
                 temp_start_pos = (temp_start_pos[0]+1, temp_start_pos[1])
                 new_maze[temp_start_pos[0]][temp_start_pos[1]] = 'w'
-
+            #random
             else:
             #carving if stuck
             #carve up
@@ -147,44 +142,49 @@ class Logic(QMainWindow, Ui_Maze):
                 if temp_start_pos[0]>Logic.ENDPOS[0]:
                     if new_maze[temp_start_pos[0]-1][temp_start_pos[1]]=='XXX':
                         new_maze[temp_start_pos[0]-1][temp_start_pos[1]]=' '
-                        previous_pos = temp_start_pos
+                        poslist.append(temp_start_pos)
                         temp_start_pos=(temp_start_pos[0]-1,temp_start_pos[1])
                         new_maze[temp_start_pos[0]][temp_start_pos[1]] = 'wv'
                     else:
-                        temp_start_pos = previous_pos
+                        temp_start_pos=self.retrace(poslist)
                 #carve down
                 elif temp_start_pos[0]<Logic.ENDPOS[0]:
                     if new_maze[temp_start_pos[0]+1][temp_start_pos[1]]=='XXX':
                         new_maze[temp_start_pos[0]+1][temp_start_pos[1]]=' '
-                        previous_pos = temp_start_pos
+                        poslist.append(temp_start_pos)
                         temp_start_pos=(temp_start_pos[0]+1,temp_start_pos[1])
                         new_maze[temp_start_pos[0]][temp_start_pos[1]] = 'wv'
                     else:
-                        temp_start_pos = previous_pos
+                        temp_start_pos=self.retrace(poslist)
                 #carve left
                 elif temp_start_pos[1]<Logic.ENDPOS[1]:
                     if new_maze[temp_start_pos[0]][temp_start_pos[1]+1]=='XXX':
                         new_maze[temp_start_pos[0]][temp_start_pos[1]+1]=' '
-                        previous_pos = temp_start_pos
+                        poslist.append(temp_start_pos)
                         temp_start_pos=(temp_start_pos[0],temp_start_pos[1]+1)
                         new_maze[temp_start_pos[0]][temp_start_pos[1]] = 'wv'
                     else:
-                        temp_start_pos = previous_pos
+                        temp_start_pos=self.retrace(poslist)
                 #carve right
                 elif temp_start_pos[1]>Logic.ENDPOS[1]:
                     if new_maze[temp_start_pos[0]][temp_start_pos[1]-1]=='XXX':
                         new_maze[temp_start_pos[0]][temp_start_pos[1]-1]=' '
-                        previous_pos = temp_start_pos
+                        poslist.append(temp_start_pos)
                         temp_start_pos=(temp_start_pos[0],temp_start_pos[1]-1)
                         new_maze[temp_start_pos[0]][temp_start_pos[1]] = 'wv'
                     else:
-                        temp_start_pos = previous_pos
-
-
-            print(temp_start_pos)
+                        temp_start_pos=self.retrace(poslist)
         Logic.TEMP=temp_start_pos
         return new_maze
-
+    def retrace(self,poslist, n=1)->tuple:
+        '''
+        recursive function that goes to previous positions
+        :param poslist:
+        :param n: number of times to go back a position
+        :return:
+        '''
+        backone=poslist.pop(-1)
+        return backone
 
     def maze_display(self,maze:list)->None:
         '''
@@ -194,11 +194,14 @@ class Logic(QMainWindow, Ui_Maze):
         for row in range(len(maze)):
             for cell in range(len(maze[row])):
                 self.maze.setItem(row,cell,QTableWidgetItem(maze[row][cell]))
+                if maze[row][cell]== 'w' or maze[row][cell] =='wv':
+                    self.maze.item(row, cell).setBackground(QtGui.QColor(0, 225, 0))
         #color start
         self.maze.item(Logic.STARTPOS[0], Logic.STARTPOS[1]).setBackground(QtGui.QColor(243, 225, 66))
         #color end
         self.maze.item(Logic.ENDPOS[0], Logic.ENDPOS[1]).setBackground(QtGui.QColor(225, 62, 58))
         self.maze.item(Logic.TEMP[0], Logic.TEMP[1]).setBackground(QtGui.QColor(0, 225, 0))
+
 
     def __init__(self)->None:
         '''
