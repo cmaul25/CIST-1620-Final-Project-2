@@ -22,6 +22,7 @@ def new_score(score:int)->None:
     :return:
     '''
     scores=read_board()
+    scores.append(score)
     sorted_scores=sort_board(scores)
     with open('leaderboard.txt','w', newline='') as file:
         writer = csv.writer(file)
@@ -35,6 +36,7 @@ def sort_board(scores:list)->list:
     '''
 
     cscores=scores[:]
+    cscores=[int(i) for i in cscores]
     for i in range(len(cscores)):
         for j in range(len(cscores[i:-1])):
             if cscores[j]>cscores[j+1]:
@@ -44,4 +46,3 @@ def sort_board(scores:list)->list:
 
 if __name__=='__main__':
     print(sort_board([3,421,23,5,15,23,2342342424,1]))
-

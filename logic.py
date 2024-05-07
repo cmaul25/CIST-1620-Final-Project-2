@@ -1,3 +1,5 @@
+import time
+
 from PyQt6.QtWidgets import *
 from gui import *
 from random import *
@@ -46,7 +48,7 @@ class Logic(QMainWindow, Ui_Maze):
                 # X X
                 elif new_maze[line-1][cell]==row[cell - 1]=='XXX' and new_maze[line-1][cell-1]==' ':
                     row.append('XXX')
-                elif random()>.5:
+                elif random()>.45:
                     row.append(' ')
                 else:
                     row.append('XXX')
@@ -204,6 +206,8 @@ class Logic(QMainWindow, Ui_Maze):
                 elif maze[row][cell]=='Start':
                     # color start
                     self.maze.item(row, cell).setBackground(QtGui.QColor(243, 225, 66))
+                elif maze[row][cell]==' :) ':
+                    self.maze.item(row,cell).setBackground(QtGui.QColor(3, 170, 70))
         return maze
          #displays leaderboard
     def display_leaderboard(self):
@@ -243,6 +247,7 @@ class Logic(QMainWindow, Ui_Maze):
     def update_time(self,val):
         self.currentPlayerTime=val
         self.CurrentTime.setText(f'Current Time: {val}')
+
     def upbutton(self,maze:list)->list:
         '''
         makes character go up
@@ -256,11 +261,13 @@ class Logic(QMainWindow, Ui_Maze):
                 maze[self.currentpos[0] - 1][self.currentpos[1]] = ' :) '
                 maze[self.currentpos[0]][self.currentpos[1]] = ' '
                 self.currentpos=(self.currentpos[0]-1,self.currentpos[1])
+                time.sleep(.001)
             if maze[self.currentpos[0] - 1][self.currentpos[1]] == 'END' or maze[self.currentpos[0]][self.currentpos[1] + 1] == 'END' or maze[self.currentpos[0]][self.currentpos[1] - 1] == 'END' or maze[self.currentpos[0] + 1][self.currentpos[1]] == 'END':
                 self.worker.requestInterruption()
                 print(self.currentPlayerTime)
                 self.end=True
-
+                leaderboard.new_score(self.currentPlayerTime)
+                self.display_leaderboard()
         return self.maze_display(maze)
     def downbutton(self,maze:list)->list:
         '''
@@ -275,10 +282,13 @@ class Logic(QMainWindow, Ui_Maze):
                 maze[self.currentpos[0] + 1][self.currentpos[1]] = ' :) '
                 maze[self.currentpos[0]][self.currentpos[1]] = ' '
                 self.currentpos=(self.currentpos[0]+1,self.currentpos[1])
+                time.sleep(.001)
             if maze[self.currentpos[0] - 1][self.currentpos[1]] == 'END' or maze[self.currentpos[0]][self.currentpos[1] + 1] == 'END' or maze[self.currentpos[0]][self.currentpos[1] - 1] == 'END' or maze[self.currentpos[0] + 1][self.currentpos[1]] == 'END':
                 self.worker.requestInterruption()
                 print(self.currentPlayerTime)
                 self.end=True
+                leaderboard.new_score(self.currentPlayerTime)
+                self.display_leaderboard()
         return self.maze_display(maze)
     def rightbutton(self,maze:list)->list:
         '''
@@ -293,10 +303,13 @@ class Logic(QMainWindow, Ui_Maze):
                 maze[self.currentpos[0]][self.currentpos[1]+1] = ' :) '
                 maze[self.currentpos[0]][self.currentpos[1]] = ' '
                 self.currentpos=(self.currentpos[0],self.currentpos[1]+1)
+                time.sleep(.001)
             if maze[self.currentpos[0] - 1][self.currentpos[1]] == 'END' or maze[self.currentpos[0]][self.currentpos[1] + 1] == 'END' or maze[self.currentpos[0]][self.currentpos[1] - 1] == 'END' or maze[self.currentpos[0] + 1][self.currentpos[1]] == 'END':
                 self.worker.requestInterruption()
                 print(self.currentPlayerTime)
                 self.end=True
+                leaderboard.new_score(self.currentPlayerTime)
+                self.display_leaderboard()
         return self.maze_display(maze)
     def leftbutton(self,maze:list)->list:
         '''
@@ -311,10 +324,13 @@ class Logic(QMainWindow, Ui_Maze):
                 maze[self.currentpos[0]][self.currentpos[1]-1] = ' :) '
                 maze[self.currentpos[0]][self.currentpos[1]] = ' '
                 self.currentpos=(self.currentpos[0],self.currentpos[1]-1)
+                time.sleep(.001)
             if maze[self.currentpos[0] - 1][self.currentpos[1]] == 'END' or maze[self.currentpos[0]][self.currentpos[1] + 1] == 'END' or maze[self.currentpos[0]][self.currentpos[1] - 1] == 'END' or maze[self.currentpos[0] + 1][self.currentpos[1]] == 'END':
                 self.worker.requestInterruption()
                 print(self.currentPlayerTime)
                 self.end=True
+                leaderboard.new_score(self.currentPlayerTime)
+                self.display_leaderboard()
         return self.maze_display(maze)
     #allows for the ability to use keys to move
     def keyPressEvent(self, event):
@@ -326,5 +342,3 @@ class Logic(QMainWindow, Ui_Maze):
             self.rightbutton(self.gen_maze)
         elif event.key()==16777234:
             self.leftbutton(self.gen_maze)
-
-
