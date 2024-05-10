@@ -1,5 +1,5 @@
-import time
-
+import os
+import sys
 from PyQt6.QtWidgets import *
 from gui import *
 from random import *
@@ -237,8 +237,11 @@ class Logic(QMainWindow, Ui_Maze):
         self.DownButton.clicked.connect(lambda: self.downbutton(self.gen_maze))
         self.RightButton.clicked.connect(lambda: self.rightbutton(self.gen_maze))
         self.LeftButton.clicked.connect(lambda: self.leftbutton(self.gen_maze))
+        self.NewGame.clicked.connect(lambda :self.new_game())
         self.maze.keyPressEvent=self.keyPressEvent
 
+    def new_game(self):
+        os.execv(sys.executable, ['python'] + sys.argv)
     def timerWorker(self):
         self.worker=Timer()
         self.worker.start()
@@ -264,9 +267,8 @@ class Logic(QMainWindow, Ui_Maze):
                 time.sleep(.001)
             if maze[self.currentpos[0] - 1][self.currentpos[1]] == 'END' or maze[self.currentpos[0]][self.currentpos[1] + 1] == 'END' or maze[self.currentpos[0]][self.currentpos[1] - 1] == 'END' or maze[self.currentpos[0] + 1][self.currentpos[1]] == 'END':
                 self.worker.requestInterruption()
-                print(self.currentPlayerTime)
                 self.end=True
-                leaderboard.new_score(self.currentPlayerTime)
+                leaderboard.new_score(self.currentPlayerTime+1)
                 self.display_leaderboard()
         return self.maze_display(maze)
     def downbutton(self,maze:list)->list:

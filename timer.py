@@ -11,8 +11,8 @@ class Timer(QThread):
         num=1
         while True:
             time.sleep(1)
+            num += 1
             self.time.emit(num)
-            num+=1
             if QThread.isInterruptionRequested(self):
                 break
 

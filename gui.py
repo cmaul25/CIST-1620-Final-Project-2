@@ -77,6 +77,12 @@ class Ui_Maze(object):
         font.setPointSize(15)
         self.CurrentTime.setFont(font)
         self.CurrentTime.setObjectName("CurrentTime")
+        self.NewGame = QtWidgets.QPushButton(parent=self.centralwidget)
+        self.NewGame.setGeometry(QtCore.QRect(1010, 680, 101, 31))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.NewGame.setFont(font)
+        self.NewGame.setObjectName("NewGame")
         Maze.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(parent=Maze)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1200, 18))
@@ -98,6 +104,7 @@ class Ui_Maze(object):
         self.DownButton.setText(_translate("Maze", " Down(or Down Key)"))
         self.LeaderBoardLabel.setText(_translate("Maze", "Leaderboard:"))
         self.CurrentTime.setText(_translate("Maze", "Current Time: 0"))
+        self.NewGame.setText(_translate("Maze", "New Game"))
 
 
 if __name__ == "__main__":
