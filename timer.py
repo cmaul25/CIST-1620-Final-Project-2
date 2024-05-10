@@ -11,7 +11,7 @@ class Timer(QThread):
         Starts thread
         :return:
         '''
-        num=1
+        num=0
         while True:
             time.sleep(1)
             num += 1

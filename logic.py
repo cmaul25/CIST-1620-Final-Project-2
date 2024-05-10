@@ -200,6 +200,14 @@ class Logic(QMainWindow, Ui_Maze):
         '''
         for row in range(len(maze)):
             for cell in range(len(maze[row])):
+                if maze[row][cell] == 'END':
+                    maze[row][cell]=' '
+                elif maze[row][cell] == 'Start':
+                    maze[row][cell] = ' '
+                if row==Logic.STARTPOS[0] and cell==Logic.STARTPOS[1]:
+                    maze[row][cell]='Start'
+                elif row==Logic.ENDPOS[0] and cell==Logic.ENDPOS[1]:
+                    maze[row][cell]='END'
                 if maze[row][cell]=='wv' or maze[row][cell]=='w':
                     maze[row][cell]=' '
                 self.maze.setItem(row,cell,QTableWidgetItem(maze[row][cell]))
@@ -211,6 +219,8 @@ class Logic(QMainWindow, Ui_Maze):
                     self.maze.item(row, cell).setBackground(QtGui.QColor(243, 225, 66))
                 elif maze[row][cell]==' :) ':
                     self.maze.item(row,cell).setBackground(QtGui.QColor(3, 170, 70))
+                elif maze[row][cell]=='XXX':
+                    self.maze.item(row,cell).setBackground(QtGui.QColor(50,50, 50))
         return maze
          #displays leaderboard
     def display_leaderboard(self):
@@ -263,11 +273,11 @@ class Logic(QMainWindow, Ui_Maze):
             if self.timeon==False:
                 self.timeon = True
                 self.timerWorker()
-            if maze[self.currentpos[0]-1][self.currentpos[1]]==' ':
+            if maze[self.currentpos[0]-1][self.currentpos[1]]==' ' or maze[self.currentpos[0]-1][self.currentpos[1]]=='Start':
                 maze[self.currentpos[0] - 1][self.currentpos[1]] = ' :) '
                 maze[self.currentpos[0]][self.currentpos[1]] = ' '
                 self.currentpos=(self.currentpos[0]-1,self.currentpos[1])
-                time.sleep(.001)
+                time.sleep(.01)
             if maze[self.currentpos[0] - 1][self.currentpos[1]] == 'END' or maze[self.currentpos[0]][self.currentpos[1] + 1] == 'END' or maze[self.currentpos[0]][self.currentpos[1] - 1] == 'END' or maze[self.currentpos[0] + 1][self.currentpos[1]] == 'END':
                 self.worker.requestInterruption()
                 self.end=True
@@ -283,11 +293,11 @@ class Logic(QMainWindow, Ui_Maze):
             if self.timeon == False:
                 self.timeon = True
                 self.timerWorker()
-            if maze[self.currentpos[0]+1][self.currentpos[1]]==' ':
+            if maze[self.currentpos[0]+1][self.currentpos[1]]==' ' or maze[self.currentpos[0]+1][self.currentpos[1]]=='Start':
                 maze[self.currentpos[0] + 1][self.currentpos[1]] = ' :) '
                 maze[self.currentpos[0]][self.currentpos[1]] = ' '
                 self.currentpos=(self.currentpos[0]+1,self.currentpos[1])
-                time.sleep(.001)
+                time.sleep(.01)
             if maze[self.currentpos[0] - 1][self.currentpos[1]] == 'END' or maze[self.currentpos[0]][self.currentpos[1] + 1] == 'END' or maze[self.currentpos[0]][self.currentpos[1] - 1] == 'END' or maze[self.currentpos[0] + 1][self.currentpos[1]] == 'END':
                 self.worker.requestInterruption()
                 print(self.currentPlayerTime)
@@ -304,11 +314,11 @@ class Logic(QMainWindow, Ui_Maze):
             if self.timeon == False:
                 self.timeon = True
                 self.timerWorker()
-            if maze[self.currentpos[0]][self.currentpos[1]+1]==' ':
+            if maze[self.currentpos[0]][self.currentpos[1]+1]==' ' or maze[self.currentpos[0]][self.currentpos[1]+1]=='Start':
                 maze[self.currentpos[0]][self.currentpos[1]+1] = ' :) '
                 maze[self.currentpos[0]][self.currentpos[1]] = ' '
                 self.currentpos=(self.currentpos[0],self.currentpos[1]+1)
-                time.sleep(.001)
+                time.sleep(.01)
             if maze[self.currentpos[0] - 1][self.currentpos[1]] == 'END' or maze[self.currentpos[0]][self.currentpos[1] + 1] == 'END' or maze[self.currentpos[0]][self.currentpos[1] - 1] == 'END' or maze[self.currentpos[0] + 1][self.currentpos[1]] == 'END':
                 self.worker.requestInterruption()
                 print(self.currentPlayerTime)
@@ -325,11 +335,11 @@ class Logic(QMainWindow, Ui_Maze):
             if self.timeon == False:
                 self.timeon = True
                 self.timerWorker()
-            if maze[self.currentpos[0]][self.currentpos[1]-1]==' ':
+            if maze[self.currentpos[0]][self.currentpos[1]-1]==' ' or maze[self.currentpos[0]][self.currentpos[1]-1]==' ':
                 maze[self.currentpos[0]][self.currentpos[1]-1] = ' :) '
                 maze[self.currentpos[0]][self.currentpos[1]] = ' '
                 self.currentpos=(self.currentpos[0],self.currentpos[1]-1)
-                time.sleep(.001)
+                time.sleep(.01)
             if maze[self.currentpos[0] - 1][self.currentpos[1]] == 'END' or maze[self.currentpos[0]][self.currentpos[1] + 1] == 'END' or maze[self.currentpos[0]][self.currentpos[1] - 1] == 'END' or maze[self.currentpos[0] + 1][self.currentpos[1]] == 'END':
                 self.worker.requestInterruption()
                 print(self.currentPlayerTime)
