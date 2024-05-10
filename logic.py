@@ -7,6 +7,9 @@ from timer import *
 import leaderboard
 
 class Logic(QMainWindow, Ui_Maze):
+    '''
+    Logic class for Gui
+    '''
     MAZEHEIGHT=68
     MAZEWIDTH=68
     STARTPOS=(0,0)
@@ -222,7 +225,7 @@ class Logic(QMainWindow, Ui_Maze):
         self.LeaderBoardLabel.setText(top_5)
     def __init__(self)->None:
         '''
-
+        sets sets up instance variables and buttons
         '''
         super().__init__()
         self.setupUi(self)
@@ -247,7 +250,7 @@ class Logic(QMainWindow, Ui_Maze):
         self.worker.start()
         self.worker.time.connect(self.update_time)
 
-    def update_time(self,val):
+    def update_time(self,val:int):
         self.currentPlayerTime=val
         self.CurrentTime.setText(f'Current Time: {val}')
 
@@ -335,7 +338,12 @@ class Logic(QMainWindow, Ui_Maze):
                 self.display_leaderboard()
         return self.maze_display(maze)
     #allows for the ability to use keys to move
-    def keyPressEvent(self, event):
+    def keyPressEvent(self, event)->None:
+        '''
+        Allows for
+        :param event:
+        :return:
+        '''
         if event.key()==16777235:
             self.upbutton(self.gen_maze)
         elif event.key()==16777237:

@@ -1,6 +1,9 @@
 import time
 from PyQt6.QtCore import *
 class Timer(QThread):
+    '''
+    Timer Thread
+    '''
     time=pyqtSignal(int)
 
     def run(self)->None:
